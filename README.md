@@ -1,8 +1,12 @@
-# React + Vite
+# Design Components Challenge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Start Date: 1st, July
 
-Currently, two official plugins are available:
+30 days of desiging components/pages seen on twitter from vercel designers(cause those guys are peak)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## stack
+
+- React
+- Tailwind css
+- Css
+- Framer Motion and GSAP
