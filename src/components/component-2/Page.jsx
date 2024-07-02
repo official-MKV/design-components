@@ -1,7 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+
+import { scroll, useTransform, useScroll } from "framer-motion";
 
 const Page = () => {
+  const scrollRef = useRef(null);
+  const { scrollYProgress } = useScroll({ container: scrollRef });
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const height = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
   const Imagelinks = [
     {
       title: "Innovative Design Solutions",
@@ -66,13 +73,18 @@ const Page = () => {
       },
     },
   ];
+  const [clicked, setClicked] = useState(0);
+  const Click = () => {};
   return (
     <div class="relative h-full w-full bg-white flex overflow-hidden">
-      <div className="relative h-full flex-[0.5]">
-        <div className="flex flex-col">
+      <div className="relative h-full flex-[0.5]" ref={scrollRef}>
+        <div className=" flex flex-col overflow-y-scroll" id="text">
           {textContent.map((item, key) => {
             return (
-              <motion.div className="w-full h-screen flex items-center justify-center flex-col gap-[20px] ">
+              <motion.div
+                id="text_content"
+                className="w-full h-screen flex items-center justify-center flex-col gap-[20px] text-center "
+              >
                 <span className="text-[30px] font-bold">{item.title}</span>
                 <span>{item.subtext}</span>
                 <div className="px-[20px] py-[10px] bg-[black] text-[white] font-bold rounded-[3px]">
@@ -84,16 +96,24 @@ const Page = () => {
         </div>
         <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:20px_24px]  [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_110%)]"></div>
       </div>
-      <div className="relative w-full h-screen flex-1 bg-[green] flex flex-col ">
+      <div
+        id="images"
+        className="relative w-full h-screen flex-1 bg-[green] flex flex-col "
+      >
         {Imagelinks.map((item, key) => {
           return (
-            <img
-              src={item.img}
-              style={{ objectFit: "cover" }}
-              className
-              key={key}
-              alt={item.title}
-            />
+            <motion.div
+              id="images_content"
+              className={`absolute w-full  h-screen  bg-cover `}
+              style={{ backgroundImage: `url('${item.img}')`, height }}
+            ></motion.div>
+            // <img
+            //   src={item.img}
+            //   style={{ objectFit: "cover" }}
+            //   className="relative w-full h-screen"
+            //   key={key}
+            //   alt={item.title}
+            // />
           );
         })}
       </div>
