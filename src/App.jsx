@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Input from "./components/component-1/Input";
+import Page from "./components/component-2/Page";
 
 import "./App.css";
 
@@ -8,7 +9,8 @@ function App() {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center ">
-      <Input />
+      {/* <Input /> */}
+      <Page />
     </div>
   );
 }
