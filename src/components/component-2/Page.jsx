@@ -1,14 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { useState, useRef } from "react";
-
-import { scroll, useTransform, useScroll } from "framer-motion";
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const Page = () => {
-  const scrollRef = useRef(null);
-  const { scrollYProgress } = useScroll({ container: scrollRef });
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const height = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
   const Imagelinks = [
     {
       title: "Innovative Design Solutions",
@@ -20,7 +13,7 @@ const Page = () => {
     },
     {
       title: "Custom Software Development",
-      img: "https://images.unsplash.com/photo-1517430816045-df4b7de11d1b",
+      img: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980",
     },
     {
       title: "UI/UX Design",
@@ -31,6 +24,7 @@ const Page = () => {
       img: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980",
     },
   ];
+
   const textContent = [
     {
       title: "Innovative Design Solutions",
@@ -73,17 +67,54 @@ const Page = () => {
       },
     },
   ];
-  const [clicked, setClicked] = useState(0);
-  const Click = () => {};
+
+  const scrollRef = useRef(null);
+  const screen = window.innerHeight;
+  const { scrollYProgress } = useScroll({ container: scrollRef });
+  const y = useTransform(scrollYProgress, [0, 1], [0, -800]);
+  const heights = Imagelinks.map((_, key) =>
+    useTransform(
+      scrollYProgress,
+      [key / Imagelinks.length, (key + 1) / Imagelinks.length],
+      ["100%", "0%"]
+    )
+  );
+
+  useEffect(() => {
+    heights.forEach((height, index) => {
+      height.onChange((value) => {
+        console.log(`Height of image ${index}: ${value}`);
+      });
+    });
+  }, [heights]);
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.onChange((latest) => {
+      console.log("Scroll Y Progress:", latest);
+    });
+    const unsubscribeY = y.onChange((latest) => {
+      console.log("Scroll Y trans Progress:", latest);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeY();
+    };
+  }, [scrollYProgress]);
+
   return (
-    <div class="relative h-full w-full bg-white flex overflow-hidden">
-      <div className="relative h-full flex-[0.5]" ref={scrollRef}>
-        <div className=" flex flex-col overflow-y-scroll" id="text">
-          {textContent.map((item, key) => {
-            return (
+    <div className="relative h-screen flex w-full overflow-hidden ">
+      <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:20px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      <div
+        className="sticky h-screen w-full  flex overflow-auto "
+        ref={scrollRef}
+      >
+        <div className="relative h-screen w-[30%] ">
+          <motion.div className="w-full h-screen " style={{ y }}>
+            {textContent.map((item, key) => (
               <motion.div
                 id="text_content"
-                className="w-full h-screen flex items-center justify-center flex-col gap-[20px] text-center "
+                className="h-screen flex items-center justify-center flex-col gap-[20px] text-center"
+                key={key}
               >
                 <span className="text-[30px] font-bold">{item.title}</span>
                 <span>{item.subtext}</span>
@@ -91,31 +122,26 @@ const Page = () => {
                   {item.cta.text}
                 </div>
               </motion.div>
+            ))}
+          </motion.div>
+        </div>
+        <motion.div id="images" className="absolute right-0 h-screen w-[70%]">
+          {Imagelinks.map((item, key) => {
+            const height = heights[key];
+            return (
+              <motion.div
+                id="images_content"
+                className="fixed h-[100vh] bottom-0 w-[70%] bg-cover origin-top"
+                style={{
+                  backgroundImage: `url('${item.img}')`,
+                  height,
+                  zIndex: -(key + 1) * 10,
+                }}
+                key={key}
+              ></motion.div>
             );
           })}
-        </div>
-        <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:20px_24px]  [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_110%)]"></div>
-      </div>
-      <div
-        id="images"
-        className="relative w-full h-screen flex-1 bg-[green] flex flex-col "
-      >
-        {Imagelinks.map((item, key) => {
-          return (
-            <motion.div
-              id="images_content"
-              className={`absolute w-full  h-screen  bg-cover `}
-              style={{ backgroundImage: `url('${item.img}')`, height }}
-            ></motion.div>
-            // <img
-            //   src={item.img}
-            //   style={{ objectFit: "cover" }}
-            //   className="relative w-full h-screen"
-            //   key={key}
-            //   alt={item.title}
-            // />
-          );
-        })}
+        </motion.div>
       </div>
     </div>
   );
